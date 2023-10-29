@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=nwg LightDM Greeter (X11)
+Comment=Small and simple LightDM Greeter written in Python, using X11
+Exec=nwg-greeter.py
+Type=Application
+X-LightDM-Session-Type=x
+

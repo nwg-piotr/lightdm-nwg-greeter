@@ -1,0 +1,9 @@
+[GTK]
+gtk-theme-name=Adwaita
+gtk-application-prefer-dark-theme=true
+gtk-cursor-theme-name=Adwaita
+
+[Greeter]
+ui-file-location=INSTALL_PATH/share/nwg-greeter/nwg-greeter.ui
+x-icon-location=INSTALL_PATH/share/nwg-greeter/img/X.png
+wayland-icon-location=INSTALL_PATH/share/nwg-greeter/img/wayland.png
