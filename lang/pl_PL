@@ -1,0 +1,11 @@
+{
+  "login": "Zaloguj",
+  "login-failed": "Logowanie nieudane",
+  "password": "Hasło",
+  "power-off": "Wyłącz",
+  "session": "Sesja",
+  "sleep": "Uśpij",
+  "reboot": "Restart",
+  "user": "Użytkownik",
+  "welcome": "Witaj!"
+}

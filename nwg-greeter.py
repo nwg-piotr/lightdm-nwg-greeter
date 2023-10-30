@@ -8,6 +8,8 @@
 
 import argparse
 import configparser
+import json
+import locale
 from datetime import datetime
 
 import gi
@@ -38,9 +40,8 @@ from gi.repository import LightDM
 DEFAULT_SESSION = "sway"
 UI_FILE_LOCATION = "/usr/local/share/nwg-greeter/nwg-greeter.ui"
 BACKGROUND_FILE_LOCATION = "/usr/local/share/nwg-greeter/img/nwg.jpg"
-WAYLAND_ICON_LOCATION = "/usr/local/share/nwg-greeter/img/wayland.png"
-X_ICON_LOCATION = "/usr/local/share/nwg-greeter/img/X.png"
 ICONS_LOCATION = "/usr/share/nwg-greeter/img/"
+LANG_FILES_LOCATION = "/usr/share/nwg-greeter/lang/"
 
 # read the cache
 cache_dir = (Path.home() / ".cache" / "nwg-greeter")
@@ -62,6 +63,7 @@ sleep_button = None
 reboot_button = None
 poweroff_button = None
 login_clicked = False
+voc = {}
 
 
 def set_password_visibility(visible):
@@ -91,12 +93,12 @@ def read_config(gtk_settings, config_file="/etc/lightdm/nwg-greeter.conf"):
                 gtk_settings.set_property(key, value)
 
     if "Greeter" in config:
-        global DEFAULT_SESSION, UI_FILE_LOCATION, BACKGROUND_FILE_LOCATION, X_ICON_LOCATION, WAYLAND_ICON_LOCATION
+        global DEFAULT_SESSION, UI_FILE_LOCATION, BACKGROUND_FILE_LOCATION, ICONS_LOCATION, LANG_FILES_LOCATION
         DEFAULT_SESSION = config["Greeter"].get("default-session", DEFAULT_SESSION)
         UI_FILE_LOCATION = config["Greeter"].get("ui-file-location", UI_FILE_LOCATION)
         BACKGROUND_FILE_LOCATION = config["Greeter"].get("background-file-location", BACKGROUND_FILE_LOCATION)
-        X_ICON_LOCATION = config["Greeter"].get("x-icon-location", X_ICON_LOCATION)
-        WAYLAND_ICON_LOCATION = config["Greeter"].get("wayland-icon-location", WAYLAND_ICON_LOCATION)
+        ICONS_LOCATION = config["Greeter"].get("icons-location", ICONS_LOCATION)
+        LANG_FILES_LOCATION = config["Greeter"].get("lang-files-location", LANG_FILES_LOCATION)
 
 
 def write_cache():
@@ -229,6 +231,15 @@ def update_time(hour_label, date_label):
     return True
 
 
+def load_json(path):
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print("Error loading json: {}".format(e))
+        return None
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-t",
@@ -238,6 +249,18 @@ def main():
 
     parser.parse_args()
     args = parser.parse_args()
+
+    # load basic vocabulary
+    global voc
+    voc = load_json(os.path.join(LANG_FILES_LOCATION, "en_US"))
+    user_locale = locale.getlocale()[0]
+    # translate if necessary and possible
+    if user_locale != "en_US" and user_locale in os.listdir(LANG_FILES_LOCATION):
+        # translated phrases
+        loc = load_json(os.path.join(LANG_FILES_LOCATION, user_locale))
+        for key in voc:
+            if key in loc:
+                voc[key] = loc[key]
 
     global greeter
     greeter = LightDM.Greeter()
@@ -269,6 +292,7 @@ def main():
     password_entry.set_property("name", "form-field")
     global password_label
     password_label = builder.get_object("password_label")
+    password_label.set_text(f'{voc["password"]}:')
     global message_label
     message_label = builder.get_object("message_label")
     message_label.set_property("name", "message_label")
@@ -276,6 +300,10 @@ def main():
     hour_label.set_property("name", "hour_label")
     date_label = builder.get_object("date_label")
     date_label.set_property("name", "date_label")
+    session_label = builder.get_object("session_label")
+    session_label.set_text(f'{voc["session"]}:')
+    user_label = builder.get_object("user_label")
+    user_label.set_text(f'{voc["user"]}:')
     left_box = builder.get_object("left_box")
     left_box.set_property("name", "left-box")
     global usernames_box
@@ -285,10 +313,12 @@ def main():
     sessions_box = builder.get_object("sessions_cb")
     sessions_box.set_property("name", "form-field")
     login_button = builder.get_object("login_button")
+    login_button.set_label(f'{voc["login"]}')
     login_button.set_property("name", "login-button")
 
     global sleep_button
     sleep_button = builder.get_object("sleep_button")
+    sleep_button.set_label(f'{voc["sleep"]}')
     sleep_button.set_property("name", "bottom-button")
     sleep_button.set_image_position(Gtk.PositionType.TOP)
     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 72, 72)
@@ -299,6 +329,7 @@ def main():
 
     global reboot_button
     reboot_button = builder.get_object("reboot_button")
+    reboot_button.set_label(f'{voc["reboot"]}')
     reboot_button.set_property("name", "bottom-button")
     reboot_button.set_image_position(Gtk.PositionType.TOP)
     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 72, 72)
@@ -309,6 +340,7 @@ def main():
 
     global poweroff_button
     poweroff_button = builder.get_object("poweroff_button")
+    poweroff_button.set_label(f'{voc["power-off"]}')
     poweroff_button.set_property("name", "bottom-button")
     poweroff_button.set_image_position(Gtk.PositionType.TOP)
     pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 72, 72)
@@ -335,7 +367,7 @@ def main():
     password_entry.set_visibility(False)
     if greeter_session_type is not None:
         print(f"greeter session type: {greeter_session_type}", file=sys.stderr)
-        message_label.set_text("Welcome!")
+        message_label.set_text(f'{voc["welcome"]}')
 
     # register handlers for our UI elements
     sleep_button.connect("clicked", sleep_click_handler)
@@ -344,7 +376,7 @@ def main():
     usernames_box.connect("changed", user_change_handler)
     password_entry.connect("activate", login_click_handler)
     login_button.connect("clicked", login_click_handler)
-    login_window.set_default(login_button)
+    # login_window.set_default(login_button)
 
     # make the greeter "fullscreen"
     screen = login_window.get_screen()
@@ -386,6 +418,7 @@ def main():
     css += b""" 
         combobox button {
             border-radius: 15px;
+            background: none;
             background-color: rgba (255, 255, 255, 0.2);
             border-color: #ccc;
             padding: 10px

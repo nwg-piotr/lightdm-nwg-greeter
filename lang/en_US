@@ -1,0 +1,11 @@
+{
+  "login": "Login",
+  "login-failed": "Login failed",
+  "password": "Password",
+  "power-off": "Power off",
+  "session": "Session",
+  "sleep": "Sleep",
+  "reboot": "Reboot",
+  "user": "User",
+  "welcome": "Welcome!"
+}

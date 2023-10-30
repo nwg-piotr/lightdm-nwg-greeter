@@ -14,6 +14,7 @@ install: nwg-greeter.conf
 	install -D -m 644 -t $(PKG_PREFIX)$(INSTALL_PATH)/share/lightdm/greeters lightdm-nwg-greeter.desktop lightdm-nwg-greeter-x11.desktop
 	install -D -m 644 -t $(PKG_PREFIX)$(INSTALL_PATH)/share/nwg-greeter nwg-greeter.ui
 	install -D -m 644 -t $(PKG_PREFIX)$(INSTALL_PATH)/share/nwg-greeter/img img/*
+	install -D -m 644 -t $(PKG_PREFIX)$(INSTALL_PATH)/share/nwg-greeter/lang lang/*
 
 uninstall:
 	rm $(INSTALL_PATH)/bin/nwg-greeter.py
