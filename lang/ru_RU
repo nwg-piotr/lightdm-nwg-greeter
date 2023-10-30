@@ -1,0 +1,12 @@
+{
+  "failed-starting-session": "Не удалось начать сеанс",
+  "login": "Войти",
+  "login-failed": "Ошибка входа",
+  "password": "Пароль",
+  "power-off": "Выключение",
+  "session": "Сессия",
+  "sleep": "Усыпить",
+  "reboot": "Перезагрузить",
+  "user": "Пользователь",
+  "welcome": "Привет!"
+}

@@ -1,4 +1,5 @@
 {
+  "failed-starting-session": "Failed to start session",
   "login": "Login",
   "login-failed": "Login failed",
   "password": "Password",

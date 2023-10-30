@@ -1,0 +1,12 @@
+{
+  "failed-starting-session": "Impossibile avviare la sessione",
+  "login": "Login",
+  "login-failed": "Accesso non riuscito",
+  "password": "Parola d'ordine",
+  "power-off": "Spegni",
+  "session": "Sessione",
+  "sleep": "Sonno",
+  "reboot": "Riavviare",
+  "user": "Utente",
+  "welcome": "Benvenuto!"
+}

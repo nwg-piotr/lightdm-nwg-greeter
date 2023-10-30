@@ -1,4 +1,5 @@
 {
+  "failed-starting-session": "Nie udało się rozpocząć sesji",
   "login": "Zaloguj",
   "login-failed": "Logowanie nieudane",
   "password": "Hasło",

@@ -1,0 +1,12 @@
+{
+  "failed-starting-session": "No se pudo iniciar la sesión",
+  "login": "Acceso",
+  "login-failed": "Error de inicio de sesion",
+  "password": "Contraseña",
+  "power-off": "Apagado",
+  "session": "Sesión",
+  "sleep": "Dormir",
+  "reboot": "Reiniciar",
+  "user": "Usuario",
+  "welcome": "Bienvenido!"
+}

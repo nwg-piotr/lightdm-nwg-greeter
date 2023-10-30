@@ -245,7 +245,13 @@ def main():
     parser.add_argument("-t",
                         "--test",
                         action="store_true",
-                        help="Do not connect to greater daemon")
+                        help="Testing mode - do not connect to greater daemon")
+
+    parser.add_argument("-l",
+                        "--lang",
+                        type=str,
+                        default="",
+                        help="force a certain Language, e.g. 'pl_PL' for Polish")
 
     parser.parse_args()
     args = parser.parse_args()
@@ -253,7 +259,7 @@ def main():
     # load basic vocabulary
     global voc
     voc = load_json(os.path.join(LANG_FILES_LOCATION, "en_US"))
-    user_locale = locale.getlocale()[0]
+    user_locale = locale.getlocale()[0] if not args.lang else args.lang
     # translate if necessary and possible
     if user_locale != "en_US" and user_locale in os.listdir(LANG_FILES_LOCATION):
         # translated phrases
