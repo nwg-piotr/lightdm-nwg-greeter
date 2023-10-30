@@ -5,5 +5,6 @@ gtk-cursor-theme-name=Adwaita
 
 [Greeter]
 ui-file-location=INSTALL_PATH/share/nwg-greeter/nwg-greeter.ui
+background-file-location=INSTALL_PATH/share/nwg-greeter/img/nwg.jpg
 x-icon-location=INSTALL_PATH/share/nwg-greeter/img/X.png
 wayland-icon-location=INSTALL_PATH/share/nwg-greeter/img/wayland.png

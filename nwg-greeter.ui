@@ -199,6 +199,27 @@
                         <property name="position">1</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkButton" id="login_button">
+                        <property name="label" translatable="yes">Login</property>
+                        <property name="use-action-appearance">False</property>
+                        <property name="width-request">100</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="halign">baseline</property>
+                        <property name="margin-top">36</property>
+                        <signal name="activate" handler="login_cb" swapped="no"/>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -215,8 +236,8 @@
                     <property name="spacing">20</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkButton" id="close_button">
-                        <property name="label" translatable="yes">Close</property>
+                      <object class="GtkButton" id="sleep_button">
+                        <property name="label" translatable="yes">Sleep</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
@@ -228,22 +249,18 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="login_button">
-                        <property name="label" translatable="yes">Login</property>
-                        <property name="use-action-appearance">False</property>
-                        <property name="width-request">100</property>
+                      <object class="GtkButton" id="reboot_button">
+                        <property name="label" translatable="yes">Reboot</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="halign">center</property>
-                        <signal name="activate" handler="login_cb" swapped="no"/>
                         <style>
-                          <class name="suggested-action"/>
+                          <class name="destructive-action"/>
                         </style>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -272,9 +289,9 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="padding">240</property>
+                <property name="padding">12</property>
                 <property name="position">0</property>
               </packing>
             </child>

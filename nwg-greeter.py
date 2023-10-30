@@ -37,8 +37,10 @@ from gi.repository import LightDM
 
 DEFAULT_SESSION = "sway"
 UI_FILE_LOCATION = "/usr/local/share/nwg-greeter/nwg-greeter.ui"
+BACKGROUND_FILE_LOCATION = "/usr/local/share/nwg-greeter/img/nwg.jpg"
 WAYLAND_ICON_LOCATION = "/usr/local/share/nwg-greeter/img/wayland.png"
 X_ICON_LOCATION = "/usr/local/share/nwg-greeter/img/X.png"
+ICONS_LOCATION = "/usr/share/nwg-greeter/img/"
 
 # read the cache
 cache_dir = (Path.home() / ".cache" / "nwg-greeter")
@@ -56,6 +58,9 @@ message_label = None
 usernames_box = None
 password_label = None
 sessions_box = None
+sleep_button = None
+reboot_button = None
+poweroff_button = None
 login_clicked = False
 
 
@@ -86,9 +91,10 @@ def read_config(gtk_settings, config_file="/etc/lightdm/nwg-greeter.conf"):
                 gtk_settings.set_property(key, value)
 
     if "Greeter" in config:
-        global DEFAULT_SESSION, UI_FILE_LOCATION, X_ICON_LOCATION, WAYLAND_ICON_LOCATION
+        global DEFAULT_SESSION, UI_FILE_LOCATION, BACKGROUND_FILE_LOCATION, X_ICON_LOCATION, WAYLAND_ICON_LOCATION
         DEFAULT_SESSION = config["Greeter"].get("default-session", DEFAULT_SESSION)
         UI_FILE_LOCATION = config["Greeter"].get("ui-file-location", UI_FILE_LOCATION)
+        BACKGROUND_FILE_LOCATION = config["Greeter"].get("background-file-location", BACKGROUND_FILE_LOCATION)
         X_ICON_LOCATION = config["Greeter"].get("x-icon-location", X_ICON_LOCATION)
         WAYLAND_ICON_LOCATION = config["Greeter"].get("wayland-icon-location", WAYLAND_ICON_LOCATION)
 
@@ -199,15 +205,24 @@ def login_click_handler(widget, data=None):
     greeter.authenticate(username)
 
 
+def sleep_click_handler(widget, data=None):
+    if LightDM.get_can_suspend():
+        LightDM.suspend()
+
+
+def reboot_click_handler(widget, data=None):
+    if LightDM.get_can_restart():
+        LightDM.restart()
+
+
 def poweroff_click_handler(widget, data=None):
-    """Event handler for clicking the Power-Off button."""
     if LightDM.get_can_shutdown():
         LightDM.shutdown()
 
 
 def update_time(hour_label, date_label):
     now = datetime.now()
-    time = now.strftime("%H:%M:%S")
+    time = now.strftime("%H:%M")
     date = now.strftime("%A, %d. %B")
     hour_label.set_label(time)
     date_label.set_label(date)
@@ -270,10 +285,37 @@ def main():
     sessions_box = builder.get_object("sessions_cb")
     sessions_box.set_property("name", "form-field")
     login_button = builder.get_object("login_button")
-    poweroff_button = builder.get_object("poweroff_button")
+    login_button.set_property("name", "login-button")
 
-    close_button = builder.get_object("close_button")
-    close_button.connect("clicked", Gtk.main_quit)
+    global sleep_button
+    sleep_button = builder.get_object("sleep_button")
+    sleep_button.set_property("name", "bottom-button")
+    sleep_button.set_image_position(Gtk.PositionType.TOP)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 72, 72)
+    img = Gtk.Image()
+    img.set_from_pixbuf(pixbuf)
+    sleep_button.set_image(img)
+    sleep_button.set_always_show_image(True)
+
+    global reboot_button
+    reboot_button = builder.get_object("reboot_button")
+    reboot_button.set_property("name", "bottom-button")
+    reboot_button.set_image_position(Gtk.PositionType.TOP)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 72, 72)
+    img = Gtk.Image()
+    img.set_from_pixbuf(pixbuf)
+    reboot_button.set_image(img)
+    reboot_button.set_always_show_image(True)
+
+    global poweroff_button
+    poweroff_button = builder.get_object("poweroff_button")
+    poweroff_button.set_property("name", "bottom-button")
+    poweroff_button.set_image_position(Gtk.PositionType.TOP)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 72, 72)
+    img = Gtk.Image()
+    img.set_from_pixbuf(pixbuf)
+    poweroff_button.set_image(img)
+    poweroff_button.set_always_show_image(True)
 
     GtkLayerShell.init_for_window(login_window)
     GtkLayerShell.set_monitor(login_window, monitor)
@@ -296,6 +338,8 @@ def main():
         message_label.set_text("Welcome!")
 
     # register handlers for our UI elements
+    sleep_button.connect("clicked", sleep_click_handler)
+    reboot_button.connect("clicked", reboot_click_handler)
     poweroff_button.connect("clicked", poweroff_click_handler)
     usernames_box.connect("changed", user_change_handler)
     password_entry.connect("activate", login_click_handler)
@@ -306,6 +350,7 @@ def main():
     screen = login_window.get_screen()
     screen.get_root_window().set_cursor(cursor)
     login_window.resize(rect.width, rect.height)
+    left_box.set_size_request(rect.width * 0.4, 0)
 
     # populate the combo boxes
     user_idx = 0
@@ -337,14 +382,11 @@ def main():
     style_context = Gtk.StyleContext()
     style_context.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
     css = provider.to_string().encode('utf-8')
+    win_style = f'\nwindow {{ background-image: url("{BACKGROUND_FILE_LOCATION}"); background-size: 100% 100% }}'.encode('utf-8')
     css += b""" 
-        window { 
-            background-image: url("/home/piotr/Obrazy/Wallpapers/nwg.jpg"); 
-            background-size: 100% 100% 
-        }
         combobox button {
             border-radius: 15px;
-            background-color: rgba (255, 255, 255, 0.1);
+            background-color: rgba (255, 255, 255, 0.2);
             border-color: #ccc;
             padding: 10px
         }
@@ -358,10 +400,20 @@ def main():
             border-color: #ccc; 
             color: #f00 
         } 
+        #login-button { 
+            background: none;
+            background-color: rgba (255, 255, 255, 0.3);
+            border: solid 1px;
+            border-color: #ccc;
+            padding: 15px;
+            border-radius: 15px; 
+        }
+        #bottom-button { background: none; border: none }
         #left-box { background-color: rgba (0, 0, 0, 0.3) }
         #message_label { font-size: 48px }
-        #hour_label { font-size: 32px; font-family: monospace }
-        #date_label { font-size: 14px; }"""
+        #hour_label { font-size: 48px}
+        #date_label { font-size: 18px; }"""
+    css += win_style
     provider.load_from_data(css)
 
     update_time(hour_label, date_label)
