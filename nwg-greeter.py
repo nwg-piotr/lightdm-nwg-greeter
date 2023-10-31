@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 #
-# Simple LightDM greeter, based on GTK 3.
+# Simple LightDM greeter, based on GTK 3, preconfigured for use with nwg-iso
 #
-# The code is based on the example greeter written and explained by
-# Matt Fischer:
-# http://www.mattfischer.com/blog/archives/5
+# This code is based on the LightDM Elephant Greeter by Maximilian Moser
+# https://github.com/max-moser/lightdm-elephant-greeter
 
 import argparse
 import configparser
@@ -36,6 +35,8 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import LightDM
+
+VERSION = "0.1.0"
 
 DEFAULT_SESSION = "sway"
 UI_FILE_LOCATION = "/usr/local/share/nwg-greeter/nwg-greeter.ui"
@@ -247,6 +248,11 @@ def load_json(path):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("-v",
+                        "--version",
+                        action="store_true",
+                        help="display Version information")
+
     parser.add_argument("-t",
                         "--test",
                         action="store_true",
@@ -260,6 +266,10 @@ def main():
 
     parser.parse_args()
     args = parser.parse_args()
+
+    if args.version:
+        print(f"nwg-greeter version {VERSION}")
+        sys.exit(0)
 
     # load basic vocabulary
     global voc
