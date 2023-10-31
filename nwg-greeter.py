@@ -128,7 +128,7 @@ def start_session():
     write_cache()
     if not greeter.start_session_sync(session):
         print("failed to start session", file=sys.stderr)
-        message_label.set_text("Failed to start Session")
+        message_label.set_text(voc["failed-starting-session"])
 
 
 def dm_show_prompt_cb(greeter, text, prompt_type=None, **kwargs):
@@ -165,7 +165,7 @@ def dm_authentication_complete_cb(greeter):
         else:
             # autentication complete, but unsucessful:
             # likely, the password was wrong
-            message_label.set_text("Login failed")
+            message_label.set_text(voc["login-failed"])
             print("login failed", file=sys.stderr)
 
 
