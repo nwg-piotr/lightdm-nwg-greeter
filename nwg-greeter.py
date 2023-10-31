@@ -449,7 +449,12 @@ def main():
             padding: 15px;
             border-radius: 15px; 
         }
-        #bottom-button { background: none; border: none }
+        #login-button:hover { background-color: rgba (255, 255, 255, 0.5); }
+        #bottom-button { background: none; padding: 6px; border: none }
+        #bottom-button:hover {
+            background-color: rgba (255, 255, 255, 0.3);
+            border-radius: 15px; 
+        }
         #left-box { background-color: rgba (0, 0, 0, 0.3) }
         #message_label { font-size: 36px }
         #hour_label { font-size: 36px}
