@@ -20,7 +20,7 @@ an X11 server, based on [Matt ~~Shultz's~~ Fischer's example LightDM greeter](ht
 
 ## Changes implemented in nwg greeter
 
-- opens always on screen 0;
+- always opens on screen 0;
 - supports multiple languages;
 - supports background image;
 - uses a different layout, inspired by [Sugar Candy SDDM theme](https://framagit.org/MarianArlt/sddm-sugar-candy) by Marian Arlt;
