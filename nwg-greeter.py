@@ -58,6 +58,7 @@ password_entry = None
 message_label = None
 usernames_box = None
 password_label = None
+show_password_cb = None
 sessions_box = None
 sleep_button = None
 reboot_button = None
@@ -186,6 +187,10 @@ def user_change_handler(widget, data=None):
     cache.set("greeter", "last-user", username)
 
 
+def password_visibility_handler(widget, entry):
+    entry.set_visibility(widget.get_active())
+
+
 def login_click_handler(widget, data=None):
     """Event handler for clicking the Login button."""
     global login_clicked
@@ -297,6 +302,9 @@ def main():
     global password_label
     password_label = builder.get_object("password_label")
     password_label.set_text(f'{voc["password"]}:')
+    global show_password_cb
+    show_password_cb = builder.get_object("show_password")
+    show_password_cb.set_label(voc["show-password"])
     global message_label
     message_label = builder.get_object("message_label")
     message_label.set_property("name", "message_label")
@@ -373,6 +381,8 @@ def main():
     if greeter_session_type is not None:
         print(f"greeter session type: {greeter_session_type}", file=sys.stderr)
         message_label.set_text(f'{voc["welcome"]}')
+
+    show_password_cb.connect("toggled", password_visibility_handler, password_entry)
 
     # register handlers for our UI elements
     sleep_button.connect("clicked", sleep_click_handler)
