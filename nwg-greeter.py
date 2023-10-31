@@ -312,6 +312,7 @@ def main():
     user_label.set_text(f'{voc["user"]}:')
     left_box = builder.get_object("left_box")
     left_box.set_property("name", "left-box")
+    vertical_box = builder.get_object("vertical_box")
     global usernames_box
     usernames_box = builder.get_object("usernames_cb")
     usernames_box.set_property("name", "form-field")
@@ -389,6 +390,7 @@ def main():
     screen.get_root_window().set_cursor(cursor)
     login_window.resize(rect.width, rect.height)
     left_box.set_size_request(rect.width * 0.4, 0)
+    vertical_box.set_size_request(rect.width * 0.3, 0)
 
     # populate the combo boxes
     user_idx = 0
