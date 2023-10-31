@@ -283,11 +283,9 @@ def main():
 
     # connect builder and widgets
     ui_file_path = UI_FILE_LOCATION
-    # builder.add_from_file(ui_file_path)
 
     display = Gdk.Display.get_default()
     builder = Gtk.Builder()
-    # ui_file_path = os.path.join(dir_name, "nwg-greeter.ui")
     builder.add_from_file(ui_file_path)
     monitor = display.get_monitor(0)
     rect = monitor.get_geometry()
@@ -358,6 +356,7 @@ def main():
 
     GtkLayerShell.init_for_window(login_window)
     GtkLayerShell.set_monitor(login_window, monitor)
+    # Anchoring seems not to work on cage, but will make the window look better while testing
     GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.TOP, 1)
     GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.BOTTOM, 1)
     GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.LEFT, 1)
@@ -368,7 +367,6 @@ def main():
         greeter.connect_to_daemon_sync()
 
     # set up the GUI
-    # login_window.get_root_window().set_cursor(cursor)
     password_entry.set_text("")
     password_entry.set_sensitive(True)
     password_entry.set_visibility(False)
@@ -383,7 +381,6 @@ def main():
     usernames_box.connect("changed", user_change_handler)
     password_entry.connect("activate", login_click_handler)
     login_button.connect("clicked", login_click_handler)
-    # login_window.set_default(login_button)
 
     # make the greeter "fullscreen"
     screen = login_window.get_screen()
@@ -415,7 +412,6 @@ def main():
         usernames_box.grab_focus()
 
     login_window.show_all()
-    # login_window.fullscreen()
     login_window.fullscreen_on_monitor(screen, 0)
 
     provider = Gtk.CssProvider()
