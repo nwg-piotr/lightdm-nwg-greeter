@@ -28,10 +28,11 @@ an X11 server, based on [Matt ~~Shultz's~~ Fischer's example LightDM greeter](ht
 
 ```text
 ❯ nwg-greeter.py -h
-usage: nwg-greeter.py [-h] [-t] [-l LANG]
+usage: nwg-greeter.py [-h] [-v] [-t] [-l LANG]
 
 options:
   -h, --help            show this help message and exit
+  -v, --version         display Version information
   -t, --test            Testing mode - do not connect to greater daemon
   -l LANG, --lang LANG  force a certain Language, e.g. 'pl_PL' for Polish
 ```
