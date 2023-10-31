@@ -56,7 +56,7 @@ configuration file to register the greeter (`/etc/lightdm/lightdm.conf`):
 ```ini
 [LightDM]
 sessions-directory=/usr/share/lightdm/sessions:/usr/share/wayland-sessions:/usr/share/xsessions
-greeters-directory=/usr/local/share/lightdm/greeters:/usr/share/xgreeters
+greeters-directory=/usr/share/lightdm/greeters:/usr/share/xgreeters
 
 [Seat:*]
 greeter-session=lightdm-nwg-greeter
