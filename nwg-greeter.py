@@ -449,8 +449,8 @@ def main():
         }
         #bottom-button { background: none; border: none }
         #left-box { background-color: rgba (0, 0, 0, 0.3) }
-        #message_label { font-size: 48px }
-        #hour_label { font-size: 48px}
+        #message_label { font-size: 36px }
+        #hour_label { font-size: 36px}
         #date_label { font-size: 18px; }"""
     css += win_style
     provider.load_from_data(css)
