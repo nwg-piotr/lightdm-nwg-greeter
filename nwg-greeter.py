@@ -36,7 +36,7 @@ from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import LightDM
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 DEFAULT_SESSION = "sway"
 UI_FILE_LOCATION = "/usr/local/share/nwg-greeter/nwg-greeter.ui"
