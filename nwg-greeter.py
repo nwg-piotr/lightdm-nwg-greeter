@@ -456,7 +456,7 @@ def main():
             padding: 10px; 
             border-color: #ccc; 
             color: #f00 
-        } 
+        }
         #login-button { 
             background: none;
             background-color: rgba (255, 255, 255, 0.3);
