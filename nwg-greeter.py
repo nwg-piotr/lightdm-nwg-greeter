@@ -344,7 +344,7 @@ def main():
     sleep_button.set_label(f'{voc["sleep"]}')
     sleep_button.set_property("name", "bottom-button")
     sleep_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 64, 64)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 48, 48)
     img = Gtk.Image()
     img.set_from_pixbuf(pixbuf)
     sleep_button.set_image(img)
@@ -355,7 +355,7 @@ def main():
     reboot_button.set_label(f'{voc["reboot"]}')
     reboot_button.set_property("name", "bottom-button")
     reboot_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 64, 64)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 48, 48)
     img = Gtk.Image()
     img.set_from_pixbuf(pixbuf)
     reboot_button.set_image(img)
@@ -366,7 +366,7 @@ def main():
     poweroff_button.set_label(f'{voc["power-off"]}')
     poweroff_button.set_property("name", "bottom-button")
     poweroff_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 64, 64)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 48, 48)
     img = Gtk.Image()
     img.set_from_pixbuf(pixbuf)
     poweroff_button.set_image(img)
@@ -407,7 +407,7 @@ def main():
     screen.get_root_window().set_cursor(cursor)
     login_window.resize(rect.width, rect.height)
     left_box.set_size_request(rect.width * 0.4, 0)
-    vertical_box.set_size_request(rect.width * 0.3, 0)
+    vertical_box.set_size_request(rect.width * 0.2, 0)
 
     # populate the combo boxes
     user_idx = 0
