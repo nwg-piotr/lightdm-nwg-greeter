@@ -89,5 +89,6 @@ lang-files-location=/usr/share/nwg-greeter/lang/
 
 ## Credits
 
-- background image by [@edskeye](https://github.com/edskeye), licensed under the terms of the 
-[Creative Commons Zero v1.0 Universal license](https://github.com/nwg-piotr/nwg-shell-wallpapers/blob/main/LICENSE).
+- background image created by [@edskeye](https://github.com/edskeye), licensed under the terms of the 
+[Creative Commons Zero v1.0 Universal license](https://github.com/nwg-piotr/nwg-shell-wallpapers/blob/main/LICENSE);
+- power icons original design comes from [Sugar Candy SDDM theme](https://framagit.org/MarianArlt/sddm-sugar-candy).
