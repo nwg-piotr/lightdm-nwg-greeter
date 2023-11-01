@@ -25,6 +25,7 @@ an X11 server, based on [Matt ~~Shultz's~~ Fischer's example LightDM greeter](ht
 - supports background image;
 - uses a different layout, inspired by [Sugar Candy SDDM theme](https://framagit.org/MarianArlt/sddm-sugar-candy) by Marian Arlt;
 - provides the "Show password" check button;
+- features power buttons;
 - supports command line arguments (mostly for testing purposes):
 
 ```text
