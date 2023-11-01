@@ -247,7 +247,7 @@
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="margin-top">40</property>
-                    <property name="spacing">20</property>
+                    <property name="spacing">30</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkButton" id="sleep_button">
