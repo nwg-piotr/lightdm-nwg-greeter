@@ -188,6 +188,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
+                        <property name="margin-start">6</property>
                         <property name="margin-bottom">6</property>
                         <property name="visibility">False</property>
                         <property name="input-purpose">password</property>
