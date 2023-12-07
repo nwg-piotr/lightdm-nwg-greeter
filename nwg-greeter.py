@@ -65,6 +65,8 @@ sleep_button = None
 reboot_button = None
 poweroff_button = None
 login_clicked = False
+clocks = []
+calendars = []
 voc = {}
 
 
@@ -228,12 +230,14 @@ def poweroff_click_handler(widget, data=None):
         LightDM.shutdown()
 
 
-def update_time(hour_label, date_label):
+def update_time():
     now = datetime.now()
     time = now.strftime("%H:%M")
     date = now.strftime("%A, %d. %B")
-    hour_label.set_label(time)
-    date_label.set_label(date)
+    for label in clocks:
+        label.set_label(time)
+    for label in calendars:
+        label.set_label(date)
     return True
 
 
@@ -299,187 +303,196 @@ def main():
     # connect builder and widgets
     ui_file_path = UI_FILE_LOCATION
 
+    connected_to_daemon_sync = False
     display = Gdk.Display.get_default()
-    builder = Gtk.Builder()
-    builder.add_from_file(ui_file_path)
-    monitor = display.get_monitor(0)
-    rect = monitor.get_geometry()
+    for ind in range(display.get_n_monitors()):
+        builder = Gtk.Builder()
+        builder.add_from_file(ui_file_path)
+        monitor = display.get_monitor(ind)
+        rect = monitor.get_geometry()
 
-    login_window = builder.get_object("login_window")
-    global password_entry
-    password_entry = builder.get_object("password_entry")
-    password_entry.set_property("name", "form-field")
-    global password_label
-    password_label = builder.get_object("password_label")
-    password_label.set_text(f'{voc["password"]}:')
-    global show_password_cb
-    show_password_cb = builder.get_object("show_password")
-    show_password_cb.set_label(voc["show-password"])
-    global message_label
-    message_label = builder.get_object("message_label")
-    message_label.set_property("name", "message_label")
-    hour_label = builder.get_object("hour_label")
-    hour_label.set_property("name", "hour_label")
-    date_label = builder.get_object("date_label")
-    date_label.set_property("name", "date_label")
-    session_label = builder.get_object("session_label")
-    session_label.set_text(f'{voc["session"]}:')
-    user_label = builder.get_object("user_label")
-    user_label.set_text(f'{voc["user"]}:')
-    left_box = builder.get_object("left_box")
-    left_box.set_property("name", "left-box")
-    vertical_box = builder.get_object("vertical_box")
-    global usernames_box
-    usernames_box = builder.get_object("usernames_cb")
-    usernames_box.set_property("name", "form-field")
-    global sessions_box
-    sessions_box = builder.get_object("sessions_cb")
-    sessions_box.set_property("name", "form-field")
-    login_button = builder.get_object("login_button")
-    login_button.set_label(f'{voc["login"]}')
-    login_button.set_property("name", "login-button")
+        login_window = builder.get_object("login_window")
+        global password_entry
+        password_entry = builder.get_object("password_entry")
+        password_entry.set_property("name", "form-field")
+        global password_label
+        password_label = builder.get_object("password_label")
+        password_label.set_text(f'{voc["password"]}:')
+        global show_password_cb
+        show_password_cb = builder.get_object("show_password")
+        show_password_cb.set_label(voc["show-password"])
+        global message_label
+        message_label = builder.get_object("message_label")
+        message_label.set_property("name", "message_label")
+        hour_label = builder.get_object("hour_label")
+        hour_label.set_property("name", "hour_label")
+        global clocks
+        clocks.append(hour_label)
+        date_label = builder.get_object("date_label")
+        date_label.set_property("name", "date_label")
+        global calendars
+        calendars.append(date_label)
+        session_label = builder.get_object("session_label")
+        session_label.set_text(f'{voc["session"]}:')
+        user_label = builder.get_object("user_label")
+        user_label.set_text(f'{voc["user"]}:')
+        left_box = builder.get_object("left_box")
+        left_box.set_property("name", "left-box")
+        vertical_box = builder.get_object("vertical_box")
+        global usernames_box
+        usernames_box = builder.get_object("usernames_cb")
+        usernames_box.set_property("name", "form-field")
+        global sessions_box
+        sessions_box = builder.get_object("sessions_cb")
+        sessions_box.set_property("name", "form-field")
+        login_button = builder.get_object("login_button")
+        login_button.set_label(f'{voc["login"]}')
+        login_button.set_property("name", "login-button")
 
-    global sleep_button
-    sleep_button = builder.get_object("sleep_button")
-    sleep_button.set_label(f'{voc["sleep"]}')
-    sleep_button.set_property("name", "bottom-button")
-    sleep_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 48, 48)
-    img = Gtk.Image()
-    img.set_from_pixbuf(pixbuf)
-    sleep_button.set_image(img)
-    sleep_button.set_always_show_image(True)
+        global sleep_button
+        sleep_button = builder.get_object("sleep_button")
+        sleep_button.set_label(f'{voc["sleep"]}')
+        sleep_button.set_property("name", "bottom-button")
+        sleep_button.set_image_position(Gtk.PositionType.TOP)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "sleep.svg"), 48, 48)
+        img = Gtk.Image()
+        img.set_from_pixbuf(pixbuf)
+        sleep_button.set_image(img)
+        sleep_button.set_always_show_image(True)
 
-    global reboot_button
-    reboot_button = builder.get_object("reboot_button")
-    reboot_button.set_label(f'{voc["reboot"]}')
-    reboot_button.set_property("name", "bottom-button")
-    reboot_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 48, 48)
-    img = Gtk.Image()
-    img.set_from_pixbuf(pixbuf)
-    reboot_button.set_image(img)
-    reboot_button.set_always_show_image(True)
+        global reboot_button
+        reboot_button = builder.get_object("reboot_button")
+        reboot_button.set_label(f'{voc["reboot"]}')
+        reboot_button.set_property("name", "bottom-button")
+        reboot_button.set_image_position(Gtk.PositionType.TOP)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "reboot.svg"), 48, 48)
+        img = Gtk.Image()
+        img.set_from_pixbuf(pixbuf)
+        reboot_button.set_image(img)
+        reboot_button.set_always_show_image(True)
 
-    global poweroff_button
-    poweroff_button = builder.get_object("poweroff_button")
-    poweroff_button.set_label(f'{voc["power-off"]}')
-    poweroff_button.set_property("name", "bottom-button")
-    poweroff_button.set_image_position(Gtk.PositionType.TOP)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 48, 48)
-    img = Gtk.Image()
-    img.set_from_pixbuf(pixbuf)
-    poweroff_button.set_image(img)
-    poweroff_button.set_always_show_image(True)
+        global poweroff_button
+        poweroff_button = builder.get_object("poweroff_button")
+        poweroff_button.set_label(f'{voc["power-off"]}')
+        poweroff_button.set_property("name", "bottom-button")
+        poweroff_button.set_image_position(Gtk.PositionType.TOP)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(os.path.join(ICONS_LOCATION, "poweroff.svg"), 48, 48)
+        img = Gtk.Image()
+        img.set_from_pixbuf(pixbuf)
+        poweroff_button.set_image(img)
+        poweroff_button.set_always_show_image(True)
 
-    GtkLayerShell.init_for_window(login_window)
-    GtkLayerShell.set_monitor(login_window, monitor)
-    # Anchoring seems not to work on cage, but will make the window look better while testing
-    GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.TOP, 1)
-    GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.BOTTOM, 1)
-    GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.LEFT, 1)
-    GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.RIGHT, 1)
+        GtkLayerShell.init_for_window(login_window)
+        GtkLayerShell.set_monitor(login_window, monitor)
+        # Anchoring seems not to work on cage, but will make the window look better while testing
+        GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.TOP, 1)
+        GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.BOTTOM, 1)
+        GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.LEFT, 1)
+        GtkLayerShell.set_anchor(login_window, GtkLayerShell.Edge.RIGHT, 1)
 
-    # connect to greeter
-    if not args.test:
-        greeter.connect_to_daemon_sync()
+        # connect to greeter
+        if not args.test and not connected_to_daemon_sync:
+            greeter.connect_to_daemon_sync()
+            connected_to_daemon_sync = True
 
-    # set up the GUI
-    password_entry.set_text("")
-    password_entry.set_sensitive(True)
-    password_entry.set_visibility(False)
-    if greeter_session_type is not None:
-        print(f"greeter session type: {greeter_session_type}", file=sys.stderr)
-        message_label.set_text(f'{voc["welcome"]}')
+        # set up the GUI
+        password_entry.set_text("")
+        password_entry.set_sensitive(True)
+        password_entry.set_visibility(False)
+        if greeter_session_type is not None:
+            print(f"greeter session type: {greeter_session_type}", file=sys.stderr)
+            message_label.set_text(f'{voc["welcome"]}')
 
-    show_password_cb.connect("toggled", password_visibility_handler, password_entry)
+        show_password_cb.connect("toggled", password_visibility_handler, password_entry)
 
-    # register handlers for our UI elements
-    sleep_button.connect("clicked", sleep_click_handler)
-    reboot_button.connect("clicked", reboot_click_handler)
-    poweroff_button.connect("clicked", poweroff_click_handler)
-    usernames_box.connect("changed", user_change_handler)
-    password_entry.connect("activate", login_click_handler)
-    login_button.connect("clicked", login_click_handler)
+        # register handlers for our UI elements
+        sleep_button.connect("clicked", sleep_click_handler)
+        reboot_button.connect("clicked", reboot_click_handler)
+        poweroff_button.connect("clicked", poweroff_click_handler)
+        usernames_box.connect("changed", user_change_handler)
+        password_entry.connect("activate", login_click_handler)
+        login_button.connect("clicked", login_click_handler)
 
-    # make the greeter "fullscreen"
-    screen = login_window.get_screen()
-    screen.get_root_window().set_cursor(cursor)
-    login_window.resize(rect.width, rect.height)
-    left_box.set_size_request(rect.width * 0.4, 0)
-    vertical_box.set_size_request(rect.width * 0.2, 0)
+        # make the greeter "fullscreen"
+        screen = login_window.get_screen()
+        screen.get_root_window().set_cursor(cursor)
+        login_window.resize(rect.width, rect.height)
+        left_box.set_size_request(rect.width * 0.4, 0)
+        vertical_box.set_size_request(rect.width * 0.2, 0)
 
-    # populate the combo boxes
-    user_idx = 0
-    last_user = cache.get("greeter", "last-user", fallback=None)
-    for idx, user in enumerate(LightDM.UserList().get_users()):
-        usernames_box.append_text(user.get_name())
-        if last_user == user.get_name():
-            user_idx = idx
+        # populate the combo boxes
+        user_idx = 0
+        last_user = cache.get("greeter", "last-user", fallback=None)
+        for idx, user in enumerate(LightDM.UserList().get_users()):
+            usernames_box.append_text(user.get_name())
+            if last_user == user.get_name():
+                user_idx = idx
 
-    for session in LightDM.get_sessions():
-        sessions_box.append_text(session.get_key())
+        for session in LightDM.get_sessions():
+            sessions_box.append_text(session.get_key())
 
-    sessions_box.set_active(0)
-    usernames_box.set_active(user_idx)
+        sessions_box.set_active(0)
+        usernames_box.set_active(user_idx)
 
-    # if the selected user requires a password, (i.e the password entry
-    # is visible), focus the password entry -- otherwise, focus the
-    # user selection box
-    if password_entry.get_sensitive():
-        password_entry.grab_focus()
-    else:
-        usernames_box.grab_focus()
+        # if the selected user requires a password, (i.e the password entry
+        # is visible), focus the password entry -- otherwise, focus the
+        # user selection box
+        if password_entry.get_sensitive():
+            password_entry.grab_focus()
+        else:
+            usernames_box.grab_focus()
 
-    login_window.show_all()
-    login_window.fullscreen_on_monitor(screen, 0)
+        login_window.show_all()
+        login_window.fullscreen_on_monitor(screen, ind)
 
-    provider = Gtk.CssProvider()
-    style_context = Gtk.StyleContext()
-    style_context.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-    css = provider.to_string().encode('utf-8')
-    win_style = f'\nwindow {{ background-image: url("{BACKGROUND_FILE_LOCATION}"); background-size: 100% 100% }}'.encode('utf-8')
-    css += b""" 
-        combobox button {
-            border-radius: 15px;
-            background: none;
-            background-color: rgba (255, 255, 255, 0.2);
-            border-color: #ccc;
-            padding: 10px
-        }
-        combobox window menu {
-            background-color: rgba (0, 0, 0, 0.8)
-        }
-        entry { 
-            background-color: rgba (255, 255, 255, 0.1); 
-            border-radius: 15px; 
-            padding: 10px; 
-            border-color: #ccc; 
-            color: #f00 
-        }
-        #login-button { 
-            background: none;
-            background-color: rgba (255, 255, 255, 0.3);
-            border: solid 1px;
-            border-color: #ccc;
-            padding: 15px;
-            border-radius: 15px; 
-        }
-        #login-button:hover { background-color: rgba (255, 255, 255, 0.5); }
-        #bottom-button { background: none; padding: 6px; border: none }
-        #bottom-button:hover {
-            background-color: rgba (255, 255, 255, 0.3);
-            border-radius: 15px; 
-        }
-        #left-box { background-color: rgba (0, 0, 0, 0.3) }
-        #message_label { font-size: 36px }
-        #hour_label { font-size: 36px}
-        #date_label { font-size: 18px; }"""
-    css += win_style
-    provider.load_from_data(css)
+        provider = Gtk.CssProvider()
+        style_context = Gtk.StyleContext()
+        style_context.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        css = provider.to_string().encode('utf-8')
+        win_style = f'\nwindow {{ background-image: url("{BACKGROUND_FILE_LOCATION}"); background-size: 100% 100% }}'.encode('utf-8')
+        css += b""" 
+            combobox button {
+                border-radius: 15px;
+                background: none;
+                background-color: rgba (255, 255, 255, 0.2);
+                border-color: #ccc;
+                padding: 10px
+            }
+            combobox window menu {
+                background-color: rgba (0, 0, 0, 0.8)
+            }
+            entry { 
+                background-color: rgba (255, 255, 255, 0.1); 
+                border-radius: 15px; 
+                padding: 10px; 
+                border-color: #ccc; 
+                color: #f00 
+            }
+            #login-button { 
+                background: none;
+                background-color: rgba (255, 255, 255, 0.3);
+                border: solid 1px;
+                border-color: #ccc;
+                padding: 15px;
+                border-radius: 15px; 
+            }
+            #login-button:hover { background-color: rgba (255, 255, 255, 0.5); }
+            #bottom-button { background: none; padding: 6px; border: none }
+            #bottom-button:hover {
+                background-color: rgba (255, 255, 255, 0.3);
+                border-radius: 15px; 
+            }
+            #left-box { background-color: rgba (0, 0, 0, 0.3) }
+            #message_label { font-size: 36px }
+            #hour_label { font-size: 36px}
+            #date_label { font-size: 18px; }"""
+        css += win_style
+        provider.load_from_data(css)
 
-    update_time(hour_label, date_label)
-    GLib.timeout_add_seconds(1, update_time, hour_label, date_label)
+    update_time()
+    GLib.timeout_add_seconds(1, update_time)
+    if args.test:
+        GLib.timeout_add_seconds(10, Gtk.main_quit)
 
     Gtk.main()
 

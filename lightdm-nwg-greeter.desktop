@@ -1,7 +1,6 @@
 [Desktop Entry]
-Name=The Elephant LightDM Greeter (Wayland)
-Comment=Small and simple LightDM Greeter written in Python, using Cage (Wayland)
-Exec=cage -s -d nwg-greeter.py
+Name=LightDM nwg greeter (Wayland)
+Comment=LightDM greeter for nwg-iso, using Hyprland
+Exec=Hyprland -c /usr/share/nwg-greeter/hyprland.conf
 Type=Application
 X-LightDM-Session-Type=wayland
-
